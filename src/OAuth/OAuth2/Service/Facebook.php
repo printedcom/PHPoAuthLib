@@ -10,6 +10,7 @@ use OAuth\Common\Consumer\CredentialsInterface;
 use OAuth\Common\Http\Client\ClientInterface;
 use OAuth\Common\Storage\TokenStorageInterface;
 use OAuth\Common\Http\Uri\UriInterface;
+use OAuth\OAuth2\Token\TokenInterface;
 
 class Facebook extends AbstractService
 {
@@ -144,6 +145,40 @@ class Facebook extends AbstractService
     public function getAccessTokenEndpoint()
     {
         return new Uri('https://graph.facebook.com/oauth/access_token');
+    }
+
+    /**
+     * Exchange short lived token for a long lived one.
+     *
+     * @param TokenInterface|null $shortLivedToken Short lived token or null, in
+     *      which case the short lived token will be retrieved from the
+     *      storage
+     * @return \OAuth\Common\Token\TokenInterface|StdOAuth2Token
+     * @throws \OAuth\Common\Http\Exception\TokenResponseException
+     */
+    public function exchangeShortLivedTokenForLongLivedToken(TokenInterface $shortLivedToken = null)
+    {
+        if (is_null($shortLivedToken)) {
+            $shortLivedToken = $this->storage->retrieveAccessToken($this->service());
+        }
+
+        $bodyParams = array(
+            'grant_type' => 'fb_exchange_token',
+            'fb_exchange_token' => $shortLivedToken->getAccessToken(),
+            'client_id'     => $this->credentials->getConsumerId(),
+            'client_secret' => $this->credentials->getConsumerSecret(),
+            'redirect_uri'  => $this->credentials->getCallbackUrl(),
+        );
+
+        $responseBody = $this->httpClient->retrieveResponse(
+            $this->getAccessTokenEndpoint(),
+            $bodyParams
+        );
+
+        $token = $this->parseAccessTokenResponse($responseBody);
+        $this->storage->storeAccessToken($this->service(), $token);
+
+        return $token;
     }
 
     /**

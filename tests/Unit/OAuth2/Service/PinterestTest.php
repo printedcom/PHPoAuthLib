@@ -2,17 +2,17 @@
 
 namespace OAuthTest\Unit\OAuth2\Service;
 
-use OAuth\OAuth2\Service\Nest;
+use OAuth\OAuth2\Service\Pinterest;
 use OAuth\Common\Token\TokenInterface;
 
-class NestTest extends \PHPUnit_Framework_TestCase
+class PinterestTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
      */
     public function testConstructCorrectInterfaceWithoutCustomUri()
     {
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -22,11 +22,11 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
      */
     public function testConstructCorrectInstanceWithoutCustomUri()
     {
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -36,11 +36,11 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
      */
     public function testConstructCorrectInstanceWithCustomUri()
     {
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface'),
@@ -52,49 +52,49 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::getAuthorizationEndpoint
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::getAuthorizationEndpoint
      */
     public function testGetAuthorizationEndpoint()
     {
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
         $this->assertSame(
-            'https://home.nest.com/login/oauth2',
+            'https://api.pinterest.com/oauth/',
             $service->getAuthorizationEndpoint()->getAbsoluteUri()
         );
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::getAccessTokenEndpoint
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::getAccessTokenEndpoint
      */
     public function testGetAccessTokenEndpoint()
     {
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
         $this->assertSame(
-            'https://api.home.nest.com/oauth2/access_token',
+            'https://api.pinterest.com/v1/oauth/token',
             $service->getAccessTokenEndpoint()->getAbsoluteUri()
         );
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::getAuthorizationMethod
+     * @covers OAuth\OAuth2\Service\Box::__construct
+     * @covers OAuth\OAuth2\Service\Box::getAuthorizationMethod
      */
     public function testGetAuthorizationMethod()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
-        $client->expects($this->once())->method('retrieveResponse')->will($this->returnArgument(0));
+        $client->expects($this->once())->method('retrieveResponse')->will($this->returnArgument(2));
 
         $token = $this->getMock('\\OAuth\\OAuth2\\Token\\TokenInterface');
         $token->expects($this->once())->method('getEndOfLife')->will($this->returnValue(TokenInterface::EOL_NEVER_EXPIRES));
@@ -103,27 +103,28 @@ class NestTest extends \PHPUnit_Framework_TestCase
         $storage = $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface');
         $storage->expects($this->once())->method('retrieveAccessToken')->will($this->returnValue($token));
 
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $storage
         );
 
-        $uri         = $service->request('https://pieterhordijk.com/my/awesome/path');
-        $absoluteUri = parse_url($uri->getAbsoluteUri());
-        $this->assertSame('auth=foo', $absoluteUri['query']);
+        $headers = $service->request('https://pieterhordijk.com/my/awesome/path');
+
+        $this->assertTrue(array_key_exists('Authorization', $headers));
+        $this->assertTrue(in_array('Bearer foo', $headers, true));
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::parseAccessTokenResponse
      */
     public function testParseAccessTokenResponseThrowsExceptionOnNulledResponse()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(null));
 
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -135,15 +136,15 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::parseAccessTokenResponse
      */
     public function testParseAccessTokenResponseThrowsExceptionOnErrorDescription()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('error_description=some_error'));
 
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -155,15 +156,15 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::parseAccessTokenResponse
      */
     public function testParseAccessTokenResponseThrowsExceptionOnError()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('error=some_error'));
 
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -175,33 +176,15 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
+     * @covers OAuth\OAuth2\Service\Pinterest::__construct
+     * @covers OAuth\OAuth2\Service\Pinterest::parseAccessTokenResponse
      */
-    public function testParseAccessTokenResponseValidWithoutRefreshToken()
+    public function testParseAccessTokenResponseValid()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('{"access_token":"foo","expires_in":"bar"}'));
 
-        $service = new Nest(
-            $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
-            $client,
-            $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
-        );
-
-        $this->assertInstanceOf('\\OAuth\\OAuth2\\Token\\StdOAuth2Token', $service->requestAccessToken('foo'));
-    }
-
-    /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
-     */
-    public function testParseAccessTokenResponseValidWithRefreshToken()
-    {
-        $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
-        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('{"access_token":"foo","expires_in":"bar","refresh_token":"baz"}'));
-
-        $service = new Nest(
+        $service = new Pinterest(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')

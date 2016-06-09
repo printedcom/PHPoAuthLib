@@ -1,10 +1,10 @@
 <?php
 /**
- * Nest service.
+ * Deezer service.
  *
  * @author  Pedro Amorim <contact@pamorim.fr>
  * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link    https://developer.nest.com/documentation
+ * @link    http://developers.deezer.com/api/
  */
 
 namespace OAuth\OAuth2\Service;
@@ -18,14 +18,25 @@ use OAuth\Common\Storage\TokenStorageInterface;
 use OAuth\Common\Http\Uri\UriInterface;
 
 /**
- * Nest service.
+ * Deezer service.
  *
  * @author  Pedro Amorim <contact@pamorim.fr>
  * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link    https://developer.nest.com/documentation
+ * @link    http://developers.deezer.com/api/
  */
-class Nest extends AbstractService
+class Deezer extends AbstractService
 {
+    /**
+     * Defined scopes
+     * http://developers.deezer.com/api/permissions
+     */
+    const SCOPE_BASIC_ACCESS      = 'basic_access';       // Access users basic information
+    const SCOPE_EMAIL             = 'email';              // Get the user's email
+    const SCOPE_OFFLINE_ACCESS    = 'offline_access';     // Access user data any time
+    const SCOPE_MANAGE_LIBRARY    = 'manage_library';     // Manage users' library
+    const SCOPE_MANAGE_COMMUNITY  = 'manage_community';   // Manage users' friends
+    const SCOPE_DELETE_LIBRARY    = 'delete_library';     // Delete library items
+    const SCOPE_LISTENING_HISTORY = 'listening_history';  // Access the user's listening history
 
     public function __construct(
         CredentialsInterface $credentials,
@@ -44,7 +55,7 @@ class Nest extends AbstractService
         );
 
         if (null === $baseApiUri) {
-            $this->baseApiUri = new Uri('https://developer-api.nest.com/');
+            $this->baseApiUri = new Uri('https://api.deezer.com/');
         }
     }
 
@@ -53,7 +64,7 @@ class Nest extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://home.nest.com/login/oauth2');
+        return new Uri('https://connect.deezer.com/oauth/auth.php');
     }
 
     /**
@@ -61,7 +72,7 @@ class Nest extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://api.home.nest.com/oauth2/access_token');
+        return new Uri('https://connect.deezer.com/oauth/access_token.php');
     }
 
     /**
@@ -69,7 +80,7 @@ class Nest extends AbstractService
      */
     protected function getAuthorizationMethod()
     {
-        return static::AUTHORIZATION_METHOD_QUERY_STRING_V4;
+        return static::AUTHORIZATION_METHOD_QUERY_STRING;
     }
 
     /**
@@ -77,27 +88,31 @@ class Nest extends AbstractService
      */
     protected function parseAccessTokenResponse($responseBody)
     {
-        $data = json_decode($responseBody, true);
-
-        if (null === $data || !is_array($data)) {
+        parse_str($responseBody, $data);
+        if (null === $data || !is_array($data) || empty($data)) {
             throw new TokenResponseException('Unable to parse response.');
         } elseif (isset($data['error'])) {
             throw new TokenResponseException(
                 'Error in retrieving token: "' . $data['error'] . '"'
             );
+        } elseif (isset($data['error_reason'])) {
+            throw new TokenResponseException(
+                'Error in retrieving token: "' . $data['error_reason'] . '"'
+            );
         }
 
         $token = new StdOAuth2Token();
         $token->setAccessToken($data['access_token']);
-        $token->setLifeTime($data['expires_in']);
+        $token->setLifeTime($data['expires']);
 
+        // I hope one day Deezer add a refresh token :)
         if (isset($data['refresh_token'])) {
             $token->setRefreshToken($data['refresh_token']);
             unset($data['refresh_token']);
         }
 
         unset($data['access_token']);
-        unset($data['expires_in']);
+        unset($data['expires']);
 
         $token->setExtraParams($data);
 

@@ -2,17 +2,17 @@
 
 namespace OAuthTest\Unit\OAuth2\Service;
 
-use OAuth\OAuth2\Service\Nest;
+use OAuth\OAuth2\Service\Deezer;
 use OAuth\Common\Token\TokenInterface;
 
-class NestTest extends \PHPUnit_Framework_TestCase
+class DeezerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
      */
     public function testConstructCorrectInterfaceWithoutCustomUri()
     {
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -22,11 +22,11 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
      */
     public function testConstructCorrectInstanceWithoutCustomUri()
     {
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -36,11 +36,11 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
      */
     public function testConstructCorrectInstanceWithCustomUri()
     {
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface'),
@@ -52,44 +52,44 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::getAuthorizationEndpoint
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::getAuthorizationEndpoint
      */
     public function testGetAuthorizationEndpoint()
     {
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
         $this->assertSame(
-            'https://home.nest.com/login/oauth2',
+            'https://connect.deezer.com/oauth/auth.php',
             $service->getAuthorizationEndpoint()->getAbsoluteUri()
         );
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::getAccessTokenEndpoint
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::getAccessTokenEndpoint
      */
     public function testGetAccessTokenEndpoint()
     {
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface'),
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
         $this->assertSame(
-            'https://api.home.nest.com/oauth2/access_token',
+            'https://connect.deezer.com/oauth/access_token.php',
             $service->getAccessTokenEndpoint()->getAbsoluteUri()
         );
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::getAuthorizationMethod
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::getAuthorizationMethod
      */
     public function testGetAuthorizationMethod()
     {
@@ -103,7 +103,7 @@ class NestTest extends \PHPUnit_Framework_TestCase
         $storage = $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface');
         $storage->expects($this->once())->method('retrieveAccessToken')->will($this->returnValue($token));
 
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $storage
@@ -111,19 +111,20 @@ class NestTest extends \PHPUnit_Framework_TestCase
 
         $uri         = $service->request('https://pieterhordijk.com/my/awesome/path');
         $absoluteUri = parse_url($uri->getAbsoluteUri());
-        $this->assertSame('auth=foo', $absoluteUri['query']);
+
+        $this->assertSame('access_token=foo', $absoluteUri['query']);
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::parseAccessTokenResponse
      */
     public function testParseAccessTokenResponseThrowsExceptionOnNulledResponse()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(null));
 
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -135,35 +136,15 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
-     */
-    public function testParseAccessTokenResponseThrowsExceptionOnErrorDescription()
-    {
-        $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
-        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('error_description=some_error'));
-
-        $service = new Nest(
-            $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
-            $client,
-            $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
-        );
-
-        $this->setExpectedException('\\OAuth\\Common\\Http\\Exception\\TokenResponseException');
-
-        $service->requestAccessToken('foo');
-    }
-
-    /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::parseAccessTokenResponse
      */
     public function testParseAccessTokenResponseThrowsExceptionOnError()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
-        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('error=some_error'));
+        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('error_reason=user_denied'));
 
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
@@ -175,33 +156,15 @@ class NestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
+     * @covers OAuth\OAuth2\Service\Deezer::__construct
+     * @covers OAuth\OAuth2\Service\Deezer::parseAccessTokenResponse
      */
-    public function testParseAccessTokenResponseValidWithoutRefreshToken()
+    public function testParseAccessTokenResponseValid()
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
-        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('{"access_token":"foo","expires_in":"bar"}'));
+        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('access_token=foo&expires=bar'));
 
-        $service = new Nest(
-            $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
-            $client,
-            $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
-        );
-
-        $this->assertInstanceOf('\\OAuth\\OAuth2\\Token\\StdOAuth2Token', $service->requestAccessToken('foo'));
-    }
-
-    /**
-     * @covers OAuth\OAuth2\Service\Nest::__construct
-     * @covers OAuth\OAuth2\Service\Nest::parseAccessTokenResponse
-     */
-    public function testParseAccessTokenResponseValidWithRefreshToken()
-    {
-        $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
-        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('{"access_token":"foo","expires_in":"bar","refresh_token":"baz"}'));
-
-        $service = new Nest(
+        $service = new Deezer(
             $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')

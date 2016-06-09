@@ -130,7 +130,7 @@ class Facebook extends AbstractService
         UriInterface $baseApiUri = null,
         $apiVersion = ""
     ) {
-        parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri, false, $apiVersion);
+        parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri, true, $apiVersion);
 
         if (null === $baseApiUri) {
             $this->baseApiUri = new Uri('https://graph.facebook.com'.$this->getApiVersionString().'/');
@@ -169,7 +169,7 @@ class Facebook extends AbstractService
 
         $token = new StdOAuth2Token();
         $token->setAccessToken($data['access_token']);
-        
+
         if (isset($data['expires'])) {
             $token->setLifeTime($data['expires']);
         }
@@ -196,6 +196,14 @@ class Facebook extends AbstractService
         $baseUrl = self::WWW_URL .$this->getApiVersionString(). '/dialog/' . $dialogPath;
         $query = http_build_query($parameters);
         return new Uri($baseUrl . '?' . $query);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getApiVersionString()
+    {
+        return empty($this->apiVersion) ? '' : '/v' . $this->apiVersion;
     }
 
     /**

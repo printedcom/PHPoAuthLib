@@ -134,18 +134,18 @@ class FacebookTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseAccessTokenResponseThrowsExceptionOnErrorJson()
     {
-        $client = $this-&gt;getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
-        $client-&gt;expects($this-&gt;once())-&gt;method('retrieveResponse')-&gt;will($this-&gt;returnValue('{"error":{"message":"some_error"}}'));
+        $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
+        $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue('{"error":{"message":"some_error"}}'));
 
         $service = new Facebook(
-            $this-&gt;getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
+            $this->getMock('\\OAuth\\Common\\Consumer\\CredentialsInterface'),
             $client,
-            $this-&gt;getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
+            $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this-&gt;setExpectedException('\\OAuth\\Common\\Http\\Exception\\TokenResponseException');
+        $this->setExpectedException('\\OAuth\\Common\\Http\\Exception\\TokenResponseException');
 
-        $service-&gt;requestAccessToken('foo');
+        $service->requestAccessToken('foo');
     }
 
     /**

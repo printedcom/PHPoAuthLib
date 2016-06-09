@@ -30,6 +30,11 @@ class Google extends AbstractService
     // Google+
     const SCOPE_GPLUS_ME                    = 'https://www.googleapis.com/auth/plus.me';
     const SCOPE_GPLUS_LOGIN                 = 'https://www.googleapis.com/auth/plus.login';
+    const SCOPE_GPLUS_CIRCLES_READ          = 'https://www.googleapis.com/auth/plus.circles.read';
+    const SCOPE_GPLUS_CIRCLES_WRITE         = 'https://www.googleapis.com/auth/plus.circles.write';
+    const SCOPE_GPLUS_STREAM_READ           = 'https://www.googleapis.com/auth/plus.stream.read';
+    const SCOPE_GPLUS_STREAM_WRITE          = 'https://www.googleapis.com/auth/plus.stream.write';
+    const SCOPE_GPLUS_MEDIA                 = 'https://www.googleapis.com/auth/plus.media.upload';
 
     // Google Drive
     const SCOPE_DOCUMENTSLIST               = 'https://docs.google.com/feeds/';
@@ -44,8 +49,13 @@ class Google extends AbstractService
 
     // Adwords
     const SCOPE_ADSENSE                     = 'https://www.googleapis.com/auth/adsense';
-    const SCOPE_ADWORDS                     = 'https://adwords.google.com/api/adwords/';
+    const SCOPE_ADWORDS                     = 'https://www.googleapis.com/auth/adwords/';
     const SCOPE_GAN                         = 'https://www.googleapis.com/auth/gan'; // google affiliate network...?
+
+    //Doubleclick for Publishers
+    const SCOPE_DFP                         = 'https://www.googleapis.com/auth/dfp';
+    const SCOPE_DFP_TRAFFICKING             = 'https://www.googleapis.com/auth/dfatrafficking';
+    const SCOPE_DFP_REPORTING               = 'https://www.googleapis.com/auth/dfareporting';
 
     // Google Analytics
     const SCOPE_ANALYTICS                   = 'https://www.googleapis.com/auth/analytics';
@@ -53,14 +63,25 @@ class Google extends AbstractService
     const SCOPE_ANALYTICS_MANAGE_USERS      = 'https://www.googleapis.com/auth/analytics.manage.users';
     const SCOPE_ANALYTICS_READ_ONLY         = 'https://www.googleapis.com/auth/analytics.readonly';
 
+    //Gmail
+    const SCOPE_GMAIL_MODIFY                = 'https://www.googleapis.com/auth/gmail.modify';
+    const SCOPE_GMAIL_READONLY              = 'https://www.googleapis.com/auth/gmail.readonly';
+    const SCOPE_GMAIL_COMPOSE               = 'https://www.googleapis.com/auth/gmail.compose';
+    const SCOPE_GMAIL_SEND                  = 'https://www.googleapis.com/auth/gmail.send';
+    const SCOPE_GMAIL_INSERT                = 'https://www.googleapis.com/auth/gmail.insert';
+    const SCOPE_GMAIL_LABELS                = 'https://www.googleapis.com/auth/gmail.labels';
+    const SCOPE_GMAIL_FULL                  = 'https://mail.google.com/';
+
     // Other services
     const SCOPE_BOOKS                       = 'https://www.googleapis.com/auth/books';
     const SCOPE_BLOGGER                     = 'https://www.googleapis.com/auth/blogger';
     const SCOPE_CALENDAR                    = 'https://www.googleapis.com/auth/calendar';
     const SCOPE_CALENDAR_READ_ONLY          = 'https://www.googleapis.com/auth/calendar.readonly';
     const SCOPE_CONTACT                     = 'https://www.google.com/m8/feeds/';
+    const SCOPE_CONTACTS_RO                 = 'https://www.googleapis.com/auth/contacts.readonly';
     const SCOPE_CHROMEWEBSTORE              = 'https://www.googleapis.com/auth/chromewebstore.readonly';
     const SCOPE_GMAIL                       = 'https://mail.google.com/mail/feed/atom';
+    const SCOPE_GMAIL_IMAP_SMTP             = 'https://mail.google.com';
     const SCOPE_PICASAWEB                   = 'https://picasaweb.google.com/data/';
     const SCOPE_SITES                       = 'https://sites.google.com/feeds/';
     const SCOPE_URLSHORTENER                = 'https://www.googleapis.com/auth/urlshortener';
@@ -96,6 +117,14 @@ class Google extends AbstractService
 
     // Android Publisher
     const SCOPE_ANDROID_PUBLISHER           = 'https://www.googleapis.com/auth/androidpublisher';
+
+    // Google Classroom
+    const SCOPE_CLASSROOM_COURSES           = 'https://www.googleapis.com/auth/classroom.courses';
+    const SCOPE_CLASSROOM_COURSES_READONLY  = 'https://www.googleapis.com/auth/classroom.courses.readonly';
+    const SCOPE_CLASSROOM_PROFILE_EMAILS    = 'https://www.googleapis.com/auth/classroom.profile.emails';
+    const SCOPE_CLASSROOM_PROFILE_PHOTOS    = 'https://www.googleapis.com/auth/classroom.profile.photos';
+    const SCOPE_CLASSROOM_ROSTERS           = 'https://www.googleapis.com/auth/classroom.rosters';
+    const SCOPE_CLASSROOM_ROSTERS_READONLY  = 'https://www.googleapis.com/auth/classroom.rosters.readonly';
 
     protected $accessType = 'online';
 

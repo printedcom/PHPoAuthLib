@@ -27,11 +27,31 @@ $servicesCredentials = array(
         'key'       => '',
         'secret'    => '',
     ),
+    'bitrix24' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
     'box' => array(
         'key'       => '',
         'secret'    => '',
     ),
+    'buffer' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
     'dailymotion' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'delicious' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'deezer' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'deviantart' => array(
         'key'       => '',
         'secret'    => '',
     ),
@@ -43,11 +63,19 @@ $servicesCredentials = array(
         'key'       => '',
         'secret'    => '',
     ),
+    'eveonline' => array(
+        'key' => '',
+        'secret' => '',
+    ),
     'facebook' => array(
         'key'       => '',
         'secret'    => '',
     ),
     'fitbit' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'fivehundredpx' => array(
         'key'       => '',
         'secret'    => '',
     ),
@@ -67,6 +95,10 @@ $servicesCredentials = array(
         'key'       => '',
         'secret'    => '',
     ),
+    'hubic' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
     'instagram' => array(
         'key'       => '',
         'secret'    => '',
@@ -83,20 +115,48 @@ $servicesCredentials = array(
         'key'       => '',
         'secret'    => '',
     ),
+    'nest' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'netatmo' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'parrotFlowerPower' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
     'paypal' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'pinterest' => array(
         'key'       => '',
         'secret'    => '',
     ),
     'pocket' => array(
         'key'       => '',
     ),
+    'quickbooks' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
     'reddit' => array(
         'key'       => '',
         'secret'    => '',
     ),
+    'redmine' => array(
+        'key'       => '',
+        'secret'    => ''
+    ),
     'runkeeper' => array(
         'key'       => '',
         'secret'    => '',
+    ),
+    'salesforce' => array(
+        'key'       => '',
+        'secret'    => ''
     ),
     'scoopit' => array(
         'key'       => '',
@@ -106,11 +166,27 @@ $servicesCredentials = array(
         'key'       => '',
         'secret'    => '',
     ),
+    'spotify' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'strava' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
     'tumblr' => array(
         'key'       => '',
         'secret'    => '',
     ),
     'twitter' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'ustream' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
+    'vimeo' => array(
         'key'       => '',
         'secret'    => '',
     ),
